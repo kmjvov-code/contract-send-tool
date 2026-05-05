@@ -2,27 +2,44 @@ import os
 import json
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify
+from functools import wraps
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import base64
 
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads', 'sent_photos')
+app.secret_key = os.environ.get('SECRET_KEY', 'wooseong-park-dev-secret-2025')
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs('data', exist_ok=True)
 
 HISTORY_FILE = os.path.join('data', 'history.json')
+APP_PASSWORD  = os.environ.get('APP_PASSWORD', '1234')
 
 # ──────────────────────────────────────────────────────────────
 #  담당자 목록 — 이름 / 사무실 / 휴대폰 직접 수정하세요
 # ──────────────────────────────────────────────────────────────
 MANAGERS = [
-    {"id": "1", "name": "홍길동", "officePhone": "031-000-0001", "mobilePhone": "010-1000-0001"},
-    {"id": "2", "name": "이순신", "officePhone": "031-000-0002", "mobilePhone": "010-1000-0002"},
-    {"id": "3", "name": "김유신", "officePhone": "031-000-0003", "mobilePhone": "010-1000-0003"},
+    {"id": "1", "name": "김현 이사", "officePhone": "054-933-4774", "mobilePhone": "010-7444-4444"},
+    {"id": "2", "name": "이성규 상무", "officePhone": "054-933-4774", "mobilePhone": "010-9772-2556"},
+    {"id": "3", "name": "이재민 소장", "officePhone": "054-933-4774", "mobilePhone": "010-2222-8621"},
+    {"id": "4", "name": "진승현 프로", "officePhone": "054-933-4774", "mobilePhone": "010-5114-9890"},
+    {"id": "4", "name": "우승협 프로", "officePhone": "054-933-4774", "mobilePhone": "010-4596-1121"},
 ]
+
+
+# ── 접근 제어 ──────────────────────────────────────────────────
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('logged_in'):
+            if request.is_json:
+                return jsonify({"success": False, "error": "인증 필요"}), 401
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated
 
 
 # ──────────────────────────────────────────────────────────────
@@ -57,15 +74,33 @@ def _append_history(record: dict) -> None:
 # ── 라우트 ────────────────────────────────────────────────────
 @app.route('/')
 def index():
-    return render_template('index.html', managers=MANAGERS)
+    logged_in = session.get('logged_in', False)
+    return render_template('index.html', managers=MANAGERS, logged_in=logged_in)
+
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    if data and data.get('password') == APP_PASSWORD:
+        session['logged_in'] = True
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다."}), 401
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.clear()
+    return jsonify({"success": True})
 
 
 @app.route('/api/managers')
+@login_required
 def api_managers():
     return jsonify(MANAGERS)
 
 
 @app.route('/api/send', methods=['POST'])
+@login_required
 def api_send():
     data = request.get_json()
     contract_no    = data.get('contractNo', '').strip()
@@ -115,6 +150,7 @@ def api_send():
 
 
 @app.route('/api/history')
+@login_required
 def api_history():
     return jsonify(_load_history())
 

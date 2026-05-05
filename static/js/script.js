@@ -71,7 +71,7 @@ function renderContractMarker(ctx, canvas) {
 
   const { x, y } = state.markerPos;
   const fontSize  = Math.max(14, Math.round(canvas.width * 0.045));
-  const text      = '계약 ←';
+  const text      = '계약';
   const pad       = Math.round(fontSize * 0.45);
 
   ctx.font = `bold ${fontSize}px -apple-system, sans-serif`;
@@ -85,8 +85,8 @@ function renderContractMarker(ctx, canvas) {
   const bx = Math.max(0, Math.min(canvas.width  - boxW, x - boxW / 2));
   const by = Math.max(0, Math.min(canvas.height - boxH, y - boxH / 2));
 
-  // 배경 박스
-  ctx.fillStyle = '#00804A';
+  // 배경 박스 — 계약 표시만 강조색 사용
+  ctx.fillStyle = '#00A651';
   _roundRect(ctx, bx, by, boxW, boxH, 6);
   ctx.fill();
 
@@ -164,7 +164,47 @@ function updateScreen() {
 
 
 // ════════════════════════════════════════════════
-//  이벤트 핸들러
+//  이벤트 핸들러 — 로그인
+// ════════════════════════════════════════════════
+
+async function handleLogin() {
+  const password = document.getElementById('loginPassword').value;
+  const errorEl  = document.getElementById('loginError');
+  const btn      = document.getElementById('loginBtn');
+
+  btn.disabled = true;
+  errorEl.textContent = '';
+
+  try {
+    const res = await fetch('/api/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ password }),
+    });
+    const result = await res.json();
+    if (result.success) {
+      window.location.reload();
+    } else {
+      errorEl.textContent = result.error || '비밀번호가 올바르지 않습니다.';
+    }
+  } catch (err) {
+    errorEl.textContent = '오류가 발생했습니다. 다시 시도해주세요.';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function handleLogout() {
+  try {
+    await fetch('/api/logout', { method: 'POST' });
+  } finally {
+    window.location.reload();
+  }
+}
+
+
+// ════════════════════════════════════════════════
+//  이벤트 핸들러 — 메인 앱
 // ════════════════════════════════════════════════
 
 function handlePhotoFile(file) {
@@ -358,14 +398,24 @@ function formatPhone(raw) {
 //  초기화
 // ════════════════════════════════════════════════
 
-async function init() {
+function initLoginPage() {
+  const loginBtn      = document.getElementById('loginBtn');
+  const loginPassword = document.getElementById('loginPassword');
+
+  loginBtn.addEventListener('click', handleLogin);
+  loginPassword.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+}
+
+async function initMainApp() {
   await loadManagers();
   await loadHistory();
 
   // 사진 입력
   document.getElementById('cameraInput').addEventListener('change', e => {
     handlePhotoFile(e.target.files[0]);
-    e.target.value = ''; // 같은 파일 재선택 허용
+    e.target.value = '';
   });
   document.getElementById('galleryInput').addEventListener('change', e => {
     handlePhotoFile(e.target.files[0]);
@@ -396,7 +446,18 @@ async function init() {
   // 문자 보내기
   document.getElementById('sendBtn').addEventListener('click', handleSend);
 
+  // 로그아웃
+  document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
   updateScreen();
+}
+
+async function init() {
+  if (document.getElementById('loginBtn')) {
+    initLoginPage();
+  } else {
+    await initMainApp();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
