@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    계약 위치 안내 발송툴 — style.css
-   색상: 올리브(#6F7F5F) + 아이보리(#F6F1E7) / 주황 제거
+   헤더: #4F6044 · 버튼: #6F7F5F · 배경: #F6F1E7 · 카드: #FFFDF7
    ═══════════════════════════════════════════════ */
 
 /* ── Reset & Base ──────────────────────────────── */
@@ -46,7 +46,7 @@ input, button, select, textarea {
 .login-card {
   width: 100%;
   max-width: 360px;
-  background: #FAF6EB;
+  background: #FFFDF7;
   border-radius: 20px;
   padding: 40px 28px 36px;
   box-shadow: 0 2px 14px rgba(80, 74, 58, 0.08);
@@ -91,7 +91,7 @@ input, button, select, textarea {
   left: 0;
   right: 0;
   height: 56px;
-  background: #6F7F5F;
+  background: #4F6044;
   z-index: 200;
   box-shadow: 0 1px 8px rgba(80, 74, 58, 0.14);
 }
@@ -159,7 +159,7 @@ input, button, select, textarea {
 
 /* ── 카드 ──────────────────────────────────────── */
 .card {
-  background: #FAF6EB;
+  background: #FFFDF7;
   border-radius: 18px;
   padding: 20px 18px;
   margin-bottom: 14px;
@@ -200,7 +200,7 @@ input, button, select, textarea {
   font-size: 16px;
   border: 1.5px solid #D5CEBC;
   border-radius: 12px;
-  background: #F2EDE0;
+  background: #F8F5EE;
   color: #000000;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
@@ -209,7 +209,7 @@ input, button, select, textarea {
 
 .form-input:focus {
   border-color: #6F7F5F;
-  background: #FAF6EB;
+  background: #FFFDF7;
 }
 
 /* ── 드롭다운 ──────────────────────────────────── */
@@ -224,7 +224,7 @@ input, button, select, textarea {
   font-size: 16px;
   border: 1.5px solid #D5CEBC;
   border-radius: 12px;
-  background: #F2EDE0;
+  background: #F8F5EE;
   color: #000000;
   outline: none;
   -webkit-appearance: none;
@@ -250,7 +250,7 @@ input, button, select, textarea {
 /* ── 담당자 정보 ────────────────────────────────── */
 .manager-info {
   display: none;
-  background: #E4ECD7;
+  background: #EAF0DC;
   border-radius: 12px;
   padding: 14px 16px;
   margin-top: 12px;
@@ -314,9 +314,9 @@ input, button, select, textarea {
 }
 
 .photo-btn-gallery {
-  background: #E4ECD7;
+  background: #EAF0DC;
   color: #000000;
-  border: 1.5px solid #BFC9AD;
+  border: 1.5px solid #B8C9A0;
 }
 
 /* ── 사진 미리보기 (.photo-preview-*) ──────────── */
@@ -354,7 +354,7 @@ input, button, select, textarea {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #E4ECD7;
+  background: #EAF0DC;
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 12px;
@@ -472,7 +472,7 @@ input, button, select, textarea {
 .history-manager {
   font-size: 12px;
   color: #000000;
-  background: #E4ECD7;
+  background: #EAF0DC;
   padding: 1px 8px;
   border-radius: 10px;
 }
@@ -533,7 +533,7 @@ input, button, select, textarea {
 }
 
 .send-btn:hover {
-  background: #5E6D50;
+  background: #4F6044;
 }
 
 .send-btn:active {
