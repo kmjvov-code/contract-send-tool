@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>계약 안내 발송 · 우성공원</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- ── 고정 헤더 ─────────────────────────────── -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="app-header-texts">
+        <span class="app-header-title">우성공원</span>
+        <span class="app-header-sub">계약 위치 안내 발송</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 메인 콘텐츠 ───────────────────────────── -->
+  <main class="app-content">
+
+    <!-- 계약 정보 카드 -->
+    <section class="card" id="sectionContractInfo">
+      <h2 class="card-title">계약 정보</h2>
+
+      <div class="form-group">
+        <label class="form-label" for="contractNo">계약번호</label>
+        <input class="form-input" type="text" id="contractNo"
+               placeholder="예) 2024-001" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contractor">계약자</label>
+        <input class="form-input" type="text" id="contractor"
+               placeholder="계약자 이름" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="customerPhone">고객 연락처</label>
+        <input class="form-input" type="tel" id="customerPhone"
+               placeholder="010-0000-0000" inputmode="tel" autocomplete="off">
+      </div>
+    </section>
+
+    <!-- 담당자 카드 -->
+    <section class="card" id="sectionManager">
+      <h2 class="card-title">담당자</h2>
+
+      <div class="form-group">
+        <label class="form-label" for="managerSelect">영업 담당자 선택</label>
+        <div class="select-wrapper">
+          <select class="form-select" id="managerSelect">
+            <option value="">담당자를 선택하세요</option>
+            {% for m in managers %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+            {% endfor %}
+          </select>
+          <span class="select-arrow">▾</span>
+        </div>
+      </div>
+
+      <div class="manager-info" id="managerInfo">
+        <div class="manager-info-row">
+          <span class="manager-info-label">담당자</span>
+          <span class="manager-info-value" id="managerName">-</span>
+        </div>
+        <div class="manager-info-row">
+          <span class="manager-info-label">사무실</span>
+          <span class="manager-info-value" id="officePhone">-</span>
+        </div>
+        <div class="manager-info-row">
+          <span class="manager-info-label">휴대폰</span>
+          <span class="manager-info-value" id="mobilePhone">-</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 사진 등록 카드 -->
+    <section class="card" id="sectionPhoto">
+      <h2 class="card-title">사진 등록</h2>
+
+      <div class="photo-btn-group">
+        <button class="photo-btn photo-btn-camera"
+                onclick="document.getElementById('cameraInput').click()">
+          카메라 촬영
+        </button>
+        <button class="photo-btn photo-btn-gallery"
+                onclick="document.getElementById('galleryInput').click()">
+          사진 선택
+        </button>
+      </div>
+
+      <input type="file" id="cameraInput"  accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="galleryInput" accept="image/*" style="display:none">
+
+      <div class="photo-preview-wrap" id="photoPreviewWrap">
+        <div class="photo-preview-placeholder" id="photoPlaceholder">
+          <span>사진을 촬영하거나 선택해주세요</span>
+        </div>
+        <canvas class="photo-preview-canvas" id="photoCanvas"></canvas>
+      </div>
+
+      <div class="contract-marker-hint" id="markerHint" style="display:none">
+        사진 위를 터치하면 <strong>계약 ←</strong> 표시를 찍을 수 있습니다
+      </div>
+    </section>
+
+    <!-- 문자 미리보기 카드 -->
+    <section class="card" id="sectionMessage">
+      <h2 class="card-title">문자 미리보기</h2>
+      <div class="message-preview-box" id="messagePreview">담당자를 선택하면 문자 내용이 표시됩니다.</div>
+    </section>
+
+    <!-- 발송 이력 카드 -->
+    <section class="card" id="sectionHistory">
+      <button class="history-header" id="historyToggle" type="button">
+        <h2 class="card-title history-card-title">발송 이력</h2>
+        <span class="history-toggle-icon" id="historyToggleIcon">▾</span>
+      </button>
+      <div class="history-body" id="historyBody">
+        <div id="historyList">
+          <p class="history-empty">발송 이력이 없습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:16px;"></div>
+  </main>
+
+  <!-- ── 하단 고정 버튼 ─────────────────────────── -->
+  <div class="send-btn-wrapper">
+    <button class="send-btn" id="sendBtn">
+      <span id="sendBtnText">문자 보내기</span>
+    </button>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
